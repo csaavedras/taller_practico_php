@@ -1,4 +1,5 @@
 <?php
+include 'header.php';
 include 'funciones.php';
 session_start();
 
@@ -8,21 +9,26 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 
-// Verificar si se envió el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Obtener los valores enviados desde el formulario
     $id = $_POST['id'];
     $nombreArea = $_POST['nombre_area'];
     $descripcion = $_POST['descripcion'];
-    $imagen = $_FILES['imagen']['name'];
-    $publicado = isset($_POST['publicado']) ? 1 : 0;
+    $publicado = isset($_POST['publicado']) === '1' ? 1 : 0;
 
-    // Guardar la imagen en la carpeta "uploads"
-    $rutaImagen = "uploads/" . basename($imagen);
-    move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaImagen);
-
-    // Actualizar los datos en la base de datos
-    $sql = "UPDATE areas SET nombre = '$nombreArea', descripcion = '$descripcion', imagen = '$imagen', publicado = $publicado WHERE id = $id";
+    // Verificar si se ha seleccionado una nueva imagen
+    if (!empty($_FILES['imagen']['name'])) {
+        $imagen = $_FILES['imagen']['name'];
+        // Guardar la imagen en la carpeta "uploads"
+        $rutaImagen = "uploads/" . basename($imagen);
+        move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaImagen);
+        // Actualizar los datos en la base de datos con la nueva imagen
+        $sql = "UPDATE areas SET nombre = '$nombreArea', descripcion = '$descripcion', imagen = '$imagen', estado = $publicado WHERE id = $id";
+    } else {
+        // Mantener el valor actual de la imagen en la base de datos
+        $sql = "UPDATE areas SET nombre = '$nombreArea', descripcion = '$descripcion', estado = $publicado WHERE id = $id";
+    }
+    
     $conn->query($sql);
     header("Location: bienvenido.php");
     exit();
@@ -62,7 +68,7 @@ if ($result->num_rows === 1) {
 </head>
 <body>
     <div class="container">
-        <h1>Editar registro</h1>
+        <h1 class="mt-5">Editar registro</h1>
         <form method="POST" action="" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?php echo $id; ?>">
             <div class="mb-3">
@@ -76,16 +82,21 @@ if ($result->num_rows === 1) {
             <div class="mb-3">
                 <label for="imagen" class="form-label">Imagen</label>
                 <input type="file" name="imagen" class="form-control">
-                <img src="uploads/<?php echo $imagen; ?>" alt="<?php echo $nombreArea; ?>" width="100">
+                <img class="img-thumbnail w-25" src="uploads/<?php echo $imagen; ?>" alt="<?php echo $nombreArea; ?>">
             </div>
             <div class="mb-3">
                 <label for="publicado" class="form-label">Publicado</label>
-                <select name="publicado" class="form-control">
-                    <option value="1" <?php if ($publicado == 1) echo 'selected'; ?>>Si</option>
-                    <option value="0" <?php if ($publicado == 0) echo 'selected'; ?>>No</option>
-                </select>
+                <div class="form-check">
+                    <input type="radio" name="publicado" value="1" id="publicado_si" <?php if ($publicado == 1) echo 'checked'; ?>>
+                    <label class="form-check-label" for="publicado_si">Si</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" name="publicado" value="0" id="publicado_no" <?php if ($publicado == 0) echo 'checked'; ?>>
+                    <label class="form-check-label" for="publicado_no">No</label>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="../prueba/bienvenido.php" class="btn btn-danger   ">Cancelar</a>
         </form>
     </div>
 </body>

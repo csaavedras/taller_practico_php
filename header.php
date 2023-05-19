@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,14 +9,22 @@
 </head>
 <body>
     <nav class="navbar navbar-expand navbar-dark bg-dark">
-        <div class="container ">
-            <a class="navbar-brand" href="bienvenido.php">Tu Aplicación</a>
+        <div class="container">
+                <a class="navbar-brand link-areas  fs-6" href="bienvenido.php">Areas</a>
+                <a class="navbar-brand link-usuarios fs-6" href="usuarios.php">Usuarios</a>
             <div class="collapse navbar-collapse float-end">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="logout.php">Cerrar sesión</a>
+                        <a class="nav-link fs-6" href="logout.php">Cerrar sesión</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+
+
+
+
+
+
+

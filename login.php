@@ -46,9 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <section class="vh-100 d-flex flex-column justify-content-center bg-ligth text-dark">
        <div class="w-50 m-auto">
-           <h1 class="text-center">Login</h1>
+           <h1 class="text-center">Inicio sesión</h1>
            <?php if (isset($mensaje)) echo "<div class='alert alert-danger text-center' role='alert'> $mensaje</div>"; ?>
-           <form method="POST" action="" class="d-flex flex-column justify-content-center">
+           <form method="POST" action="" class="d-flex flex-column justify-content-center ">
                <div class="mb-3">
                    <label for="usuario" class="form-label">Usuario</label>
                    <input type="text" name="usuario" class="form-control" required>

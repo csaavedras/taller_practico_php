@@ -1,35 +1,26 @@
 <?php
 include 'funciones.php';
 include 'header.php';
-
 session_start();
 
-
-// Verificar si el usuario no está autenticado
 if (!isset($_SESSION['usuario'])) {
     header("Location: login.php");
     exit();
 }
-// Obtener el nombre de usuario de la sesión
+
 $usuario = $_SESSION['usuario'];
 
-// Verificar si se envió el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Obtener los valores enviados desde el formulario
-    $nombreArea = $_POST['nombre_area'];
-    $descripcion = $_POST['descripcion'];
-    $imagen = $_FILES['imagen']['name'];
-    $publicado = isset($_POST['publicado']) ? 1 : 0;
 
-    // Guardar la imagen en la carpeta "uploads"
-    $rutaImagen = "uploads/" . basename($imagen);
-    var_dump($imagen);
-    move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaImagen);
+    $usuario = $_POST['usuario'];
+    $clave = $_POST['clave'];
+    $nombre = $_POST['nombre'];
+    $estado = $_POST['estado'];
 
-    // Insertar los datos en la base de datos
-    $sql = "INSERT INTO areas (nombre, descripcion, imagen, publicado) VALUES ('$nombreArea', '$descripcion', '$imagen', $publicado)";
+    $sql = "INSERT INTO usuarios (usuario, clave, nombre, estado) VALUES ('$usuario', '$clave', '$nombre', $estado)";
     $conn->query($sql);
-    header("Location: bienvenido.php");
+
+    header("Location: usuarios.php");
     exit();
 }
 
@@ -55,39 +46,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="container">
-        <h1 class="mt-5 title">Bienvenido <?php echo $usuario; ?></h1>
+        <h1 class="mt-5">Bienvenido <?php echo $usuario; ?></h1>
         <div class="insertar_registro mb-3 d-none">
             <div class="button_hidden float-end text-danger fs-4">
                 <i class="bi bi-x-circle"></i>
             </div>
-            <form id="userForm" method="POST" action="" enctype="multipart/form-data novalidate">
+            <form id="userForm" method="POST" action="" enctype="multipart/form-data" novalidate>
                 <div class="mb-3">
-                    <label for="nombre_area" class="form-label">Nombre area</label>
-                    <input type="text" name="nombre_area" class="form-control " required>
+                    <label for="usuario" class="form-label">Usuario</label>
+                    <input type="text" name="usuario" class="form-control" required>
                 </div>
                 <div class="mb-3">
-                    <label for="descripcion" class="form-label">Descripción</label>
-                    <textarea name="descripcion" class="form-control"></textarea>
+                    <label for="clave" class="form-label">Clave</label>
+                    <input type="password" name="clave" class="form-control" required>
                 </div>
                 <div class="mb-3">
-                    <label for="imagen" class="form-label">Imagen</label>
-                    <input type="file" name="imagen" class="form-control">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" name="nombre" class="form-control" required>
                 </div>
                 <div class="mb-3">
-                    <label for="publicado" class="form-label">Publicado</label>
-                    <select name="publicado" class="form-control">
-                        <option value="1">Si</option>
-                        <option value="0">No</option>
-                    </select>
+                    <label for="estado" class="form-label">Publicado</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="estado" id="estado_si" value="1" checked>
+                        <label class="form-check-label" for="estado_si">
+                            Si
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="estado" id="estado_no" value="0">
+                        <label class="form-check-label" for="estado_no">
+                            No
+                        </label>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Guardar</button>
             </form>
         </div>
-        <button class="btn btn-primary button_show d-flex align-items-center gap-2"><i class="bi bi-plus-circle"></i> Insertar registro</button>
+        <button class="btn btn-primary button_show">Insertar registro</button>
         <table class="table mt-4 table-dark table-striped">
             <thead>
                 <tr>
-                    <th>Nombre area</th>
+                    <th>Usuario</th>
                     <th>Publicado</th>
                     <th></th>
                 </tr>
@@ -95,17 +94,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <tbody>
                 <?php
                     // Obtener los registros de la tabla 'areas'
-                    $sql = "SELECT * FROM areas";
+                    $sql = "SELECT * FROM usuarios";
                     $result = $conn->query($sql);
                 ?>
 
                     <?php if ($result->num_rows > 0): ?>
                             <?php while ($row = $result->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?php echo $row['nombre']; ?></td>
+                                    <td><?php echo $row['usuario']; ?></td>
                                     <td><?php echo $row['estado'] ? 'Si' : 'No'; ?></td>
                                     <td>
-                                        <a href="editar.php?id=<?php echo $row['id']; ?>" class="btn btn-primary">Editar</a>
+                                        <a href="editar_usuario.php?id=<?php echo $row['id']; ?>" class="btn btn-primary">Editar</a>
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
