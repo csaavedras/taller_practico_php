@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['id'];
     $nombreArea = $_POST['nombre_area'];
     $descripcion = $_POST['descripcion'];
-    $publicado = isset($_POST['publicado']) === '1' ? 1 : 0;
+    $publicado = isset($_POST['publicado']) && $_POST['publicado'] == "1" ? 1 : 0;
 
     // Verificar si se ha seleccionado una nueva imagen
     if (!empty($_FILES['imagen']['name'])) {
@@ -46,7 +46,7 @@ if ($result->num_rows === 1) {
     $nombreArea = $row['nombre'];
     $descripcion = $row['descripcion'];
     $imagen = $row['imagen'];
-    $publicado = $row['publicado'];
+    $publicado = $row['estado'];
 }
 ?>
 

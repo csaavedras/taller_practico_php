@@ -19,15 +19,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombreArea = $_POST['nombre_area'];
     $descripcion = $_POST['descripcion'];
     $imagen = $_FILES['imagen']['name'];
-    $publicado = isset($_POST['publicado']) ? 1 : 0;
+    $estado = isset($_POST['publicado']) && $_POST['publicado'] == "1" ? 1 : 0;
 
     // Guardar la imagen en la carpeta "uploads"
     $rutaImagen = "uploads/" . basename($imagen);
-    var_dump($imagen);
     move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaImagen);
 
     // Insertar los datos en la base de datos
-    $sql = "INSERT INTO areas (nombre, descripcion, imagen, publicado) VALUES ('$nombreArea', '$descripcion', '$imagen', $publicado)";
+    $sql = "INSERT INTO areas (nombre, descripcion, imagen, estado) VALUES ('$nombreArea', '$descripcion', '$imagen', $estado)";
     $conn->query($sql);
     header("Location: bienvenido.php");
     exit();
@@ -60,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="button_hidden float-end text-danger fs-4">
                 <i class="bi bi-x-circle"></i>
             </div>
-            <form id="userForm" method="POST" action="" enctype="multipart/form-data novalidate">
+            <form id="userForm" method="POST" action="" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="nombre_area" class="form-label">Nombre area</label>
                     <input type="text" name="nombre_area" class="form-control " required>
@@ -75,10 +74,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="mb-3">
                     <label for="publicado" class="form-label">Publicado</label>
-                    <select name="publicado" class="form-control">
-                        <option value="1">Si</option>
-                        <option value="0">No</option>
-                    </select>
+                    <div class="form-check">
+                    <input type="radio" name="publicado" value="1" id="publicado_si">
+                    <label class="form-check-label" for="publicado_si">Si</label>
+                    </div>
+                   <div class="form-check">
+                    <input type="radio" name="publicado" value="0" id="publicado_no">
+                    <label class="form-check-label" for="publicado_no">No</label>
+                   </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Guardar</button>
             </form>
@@ -103,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <?php while ($row = $result->fetch_assoc()): ?>
                                 <tr>
                                     <td><?php echo $row['nombre']; ?></td>
-                                    <td><?php echo $row['estado'] ? 'Si' : 'No'; ?></td>
+                                    <td><?php echo $row['estado'] == 1 ? 'Si' : 'No'; ?></td>
                                     <td>
                                         <a href="editar.php?id=<?php echo $row['id']; ?>" class="btn btn-primary">Editar</a>
                                     </td>
